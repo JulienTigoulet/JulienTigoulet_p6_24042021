@@ -1,26 +1,24 @@
 const User = require('../models/user');
-//import token
-const jwt = require('jsonwebtoken'); 
+//import jsonwebtoken
+const jwt = require('jsonwebtoken');
+//import bcrypt
 const bcrypt =require('bcrypt');
 
-//permet de créer un compte
+//création d'un compte
 exports.signup = (req, res, next) => {
-    //hash du password
     bcrypt.hash(req.body.password, 10)
-        //nouveau user
       .then(hash => {
         const user = new User({
           email: req.body.email,
           password: hash
         });
-        //enregistrement du user
         user.save()
           .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
           .catch(error => res.status(400).json({ error }));
       })
-      .catch(error => res.status(500).json({ error }));
+      .catch(error => res.status(500).json({ message:'Utilisateur pas crée' }));
   };
-
+//login d'un compte déjà créer
 exports.login = (req, res, next) => {
 User.findOne({ email: req.body.email })
     .then(user => {
