@@ -3,16 +3,16 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 //import bcrypt
 const bcrypt = require('bcrypt');
-//import maskdata
-const MaskData = require('maskdata');
+//import crypto-js
+const CryptoJS = require("crypto-js");
 
 //création d'un compte
 exports.signup = (req, res, next) => {
-    const maskedEmail = MaskData.maskEmail2(req.body.email);
+    const emailCrypted = CryptoJS.HmacSHA256(req.body.email, "UukFSurzKQLbhKkzP7PhSY0sRv8ZzVC6HmLnXzgquqCt4wpQBDc1Tp9GQuoBOy7t5jLa9cJTLA9iAncuEzUDUhyKqOJwRYMuVzuz").toString();
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
-          email: maskedEmail,
+          email: emailCrypted,
           password: hash
         });
         user.save()
@@ -23,8 +23,9 @@ exports.signup = (req, res, next) => {
   };
 //login d'un compte déjà créer
 exports.login = (req, res, next) => {
-    const maskedEmail = MaskData.maskEmail2(req.body.email);
-    User.findOne({ email:maskedEmail})
+    const emailCrypted = CryptoJS.HmacSHA256(req.body.email, "UukFSurzKQLbhKkzP7PhSY0sRv8ZzVC6HmLnXzgquqCt4wpQBDc1Tp9GQuoBOy7t5jLa9cJTLA9iAncuEzUDUhyKqOJwRYMuVzuz").toString();
+    // comparaison de l'emailLogin avec l'email en base de donné
+    User.findOne({ email:emailCrypted})
     .then(user => {
         if (!user) {
             return res.status(401).json({ error: 'Utilisateur non trouvé !' });
