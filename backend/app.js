@@ -12,7 +12,13 @@ const helmet = require('helmet');
 //import routes
 const userRoutes = require('./routes/user');
 const sauceRoutes = require('./routes/sauce');
-
+//dotenv import
+require('dotenv').config();
+const db = {
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD
+}
+console.log(db);
 const app = express();
 //mongoose connexion
 mongoose.connect('mongodb+srv://julien_tigoulet:19952021@cluster0.rbn4y.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',

@@ -5,10 +5,14 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 //import crypto-js
 const CryptoJS = require("crypto-js");
-
+require('dotenv').config();
+const db= {
+    keyEmail: process.env.KEY_CRYPTOEMAIL,
+    keyToken: process.env.KEY_TOKEN
+};
 //création d'un compte
 exports.signup = (req, res, next) => {
-    const emailCrypted = CryptoJS.HmacSHA256(req.body.email, "UukFSurzKQLbhKkzP7PhSY0sRv8ZzVC6HmLnXzgquqCt4wpQBDc1Tp9GQuoBOy7t5jLa9cJTLA9iAncuEzUDUhyKqOJwRYMuVzuz").toString();
+    const emailCrypted = CryptoJS.HmacSHA256(req.body.email,`${db.keyEmail}`).toString();
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
@@ -23,7 +27,7 @@ exports.signup = (req, res, next) => {
   };
 //login d'un compte déjà créer
 exports.login = (req, res, next) => {
-    const emailCrypted = CryptoJS.HmacSHA256(req.body.email, "UukFSurzKQLbhKkzP7PhSY0sRv8ZzVC6HmLnXzgquqCt4wpQBDc1Tp9GQuoBOy7t5jLa9cJTLA9iAncuEzUDUhyKqOJwRYMuVzuz").toString();
+    const emailCrypted = CryptoJS.HmacSHA256(req.body.email,`${db.keyEmail}`).toString();
     // comparaison de l'emailLogin avec l'email en base de donné
     User.findOne({ email:emailCrypted})
     .then(user => {
@@ -39,7 +43,7 @@ exports.login = (req, res, next) => {
                     userId: user._id,
                     token: jwt.sign(
                     { userId: user._id },
-                    '994T0Z0GTCtfxXg0y8Qfgtrmi1iu0JCc1wH8b6QmeBzBYyHUcBlqOYwV6stDrMXb8SlmqFcqesRJ6Zr7yuUC4xrA4DAxFocvpxRR6syiEdFaclAOKQyinqAM',
+                    `${db.keyToken}`,
                     { expiresIn: '24h' }
                     )
                 });
