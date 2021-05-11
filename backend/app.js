@@ -18,10 +18,10 @@ const db = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD
 }
-console.log(db);
+
 const app = express();
 //mongoose connexion
-mongoose.connect('mongodb+srv://julien_tigoulet:19952021@cluster0.rbn4y.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+mongoose.connect(`mongodb+srv://${db.username}:${db.password}@cluster0.rbn4y.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
